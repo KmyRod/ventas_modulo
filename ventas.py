@@ -5,6 +5,17 @@ UMBRAL_DESCUENTO_ESTANDAR = 1000
 UMBRAL_DESCUENTO_VIP = 500
 
 
+def es_venta_valida(transaccion):
+    return (transaccion['tipo'] == 'venta'
+            and transaccion['monto'] > 0
+            and transaccion['estado'] == 'completado')
+
+
+def es_devolucion_valida(transaccion):
+    return (transaccion['tipo'] == 'devolucion'
+            and transaccion['monto'] > 0)
+
+
 def aplica_descuento(transaccion):
     monto = transaccion['monto']
     cliente_tipo = transaccion['cliente_tipo']
@@ -35,12 +46,12 @@ def procesar_transacciones(lista_transacciones):
 
     for transaccion in lista_transacciones:
 
-        if transaccion['tipo'] == 'venta' and transaccion['monto'] > 0 and transaccion['estado'] == 'completado':
+        if es_venta_valida(transaccion):
             resultado = formatear_resultado_venta(transaccion)
             resultados.append(resultado)
             registrar_log(transaccion['nombre'])
 
-        elif transaccion['tipo'] == 'devolucion' and transaccion['monto'] > 0:
+        elif es_devolucion_valida(transaccion):
             resultado = formatear_resultado_devolucion(transaccion)
             resultados.append(resultado)
             registrar_log(transaccion['nombre'])
