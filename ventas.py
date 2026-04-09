@@ -1,34 +1,38 @@
 # Módulo inicial de procesamiento de ventas
 
-def p(d):
+DESCUENTO_PORCENTAJE = 0.9
+UMBRAL_DESCUENTO_ESTANDAR = 1000
+UMBRAL_DESCUENTO_VIP = 500
 
-    res = []
+def procesar_transacciones(lista_transacciones):
 
-    for i in d:
+    resultados = []
 
-        if i['tipo'] == 'venta' and i['monto'] > 0 and i['estado'] == 'completado':
+    for transaccion in lista_transacciones:
 
-            if i['monto'] > 1000 or (i['cliente_tipo'] == 'VIP' and i['monto'] > 500):
-                f = i['monto'] * 0.9
+        if transaccion['tipo'] == 'venta' and transaccion['monto'] > 0 and transaccion['estado'] == 'completado':
+
+            if transaccion['monto'] > 1000 or (transaccion['cliente_tipo'] == 'VIP' and transaccion['monto'] > 500):
+                monto_final = transaccion['monto'] * 0.9
             else:
-                f = i['monto']
+                monto_final = transaccion['monto']
 
-            s = "Cliente: " + i['nombre'] + " - Total: " + str(f)
-            res.append(s)
-            print("Procesando registro de: " + i['nombre'])
+            resultado = "Cliente: " + transaccion['nombre'] + " - Total: " + str(monto_final)
+            resultados.append(resultado)
+            print("Procesando registro de: " + transaccion['nombre'])
 
-        elif i['tipo'] == 'devolucion' and i['monto'] > 0:
-            f = i['monto'] * -1
-            s = "Cliente: " + i['nombre'] + " - Retorno: " + str(f)
-            res.append(s)
-            print("Procesando registro de: " + i['nombre'])
+        elif transaccion['tipo'] == 'devolucion' and transaccion['monto'] > 0:
+            monto_final = transaccion['monto'] * -1
+            resultado = "Cliente: " + transaccion['nombre'] + " - Retorno: " + str(monto_final)
+            resultados.append(resultado)
+            print("Procesando registro de: " + transaccion['nombre'])
 
-    return res
+    return resultados
 
-datos_sucios = [
+datos_transacciones = [
     {'tipo': 'venta', 'monto': 1200, 'estado': 'completado', 'cliente_tipo': 'estándar', 'nombre': 'Juan'},
     {'tipo': 'venta', 'monto': 600, 'estado': 'completado', 'cliente_tipo': 'VIP', 'nombre': 'Ana'},
     {'tipo': 'devolucion', 'monto': 50, 'estado': 'completado', 'cliente_tipo': 'estándar', 'nombre': 'Pedro'}
 ]
 
-print(p(datos_sucios))
+print(procesar_transacciones(datos_transacciones))
