@@ -4,6 +4,31 @@ DESCUENTO_PORCENTAJE = 0.9
 UMBRAL_DESCUENTO_ESTANDAR = 1000
 UMBRAL_DESCUENTO_VIP = 500
 
+
+def aplica_descuento(transaccion):
+    monto = transaccion['monto']
+    cliente_tipo = transaccion['cliente_tipo']
+    if monto > UMBRAL_DESCUENTO_ESTANDAR:
+        return monto * DESCUENTO_PORCENTAJE
+    if cliente_tipo == 'VIP' and monto > UMBRAL_DESCUENTO_VIP:
+        return monto * DESCUENTO_PORCENTAJE
+    return monto
+
+
+def registrar_log(nombre_cliente):
+    print("Procesando registro de: " + nombre_cliente)
+
+
+def formatear_resultado_venta(transaccion):
+    monto_final = aplica_descuento(transaccion)
+    return "Cliente: " + transaccion['nombre'] + " - Total: " + str(monto_final)
+
+
+def formatear_resultado_devolucion(transaccion):
+    monto_retorno = transaccion['monto'] * -1
+    return "Cliente: " + transaccion['nombre'] + " - Retorno: " + str(monto_retorno)
+
+
 def procesar_transacciones(lista_transacciones):
 
     resultados = []
@@ -11,23 +36,17 @@ def procesar_transacciones(lista_transacciones):
     for transaccion in lista_transacciones:
 
         if transaccion['tipo'] == 'venta' and transaccion['monto'] > 0 and transaccion['estado'] == 'completado':
-
-            if transaccion['monto'] > 1000 or (transaccion['cliente_tipo'] == 'VIP' and transaccion['monto'] > 500):
-                monto_final = transaccion['monto'] * 0.9
-            else:
-                monto_final = transaccion['monto']
-
-            resultado = "Cliente: " + transaccion['nombre'] + " - Total: " + str(monto_final)
+            resultado = formatear_resultado_venta(transaccion)
             resultados.append(resultado)
-            print("Procesando registro de: " + transaccion['nombre'])
+            registrar_log(transaccion['nombre'])
 
         elif transaccion['tipo'] == 'devolucion' and transaccion['monto'] > 0:
-            monto_final = transaccion['monto'] * -1
-            resultado = "Cliente: " + transaccion['nombre'] + " - Retorno: " + str(monto_final)
+            resultado = formatear_resultado_devolucion(transaccion)
             resultados.append(resultado)
-            print("Procesando registro de: " + transaccion['nombre'])
+            registrar_log(transaccion['nombre'])
 
     return resultados
+
 
 datos_transacciones = [
     {'tipo': 'venta', 'monto': 1200, 'estado': 'completado', 'cliente_tipo': 'estándar', 'nombre': 'Juan'},
